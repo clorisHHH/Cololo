@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>COLOLO 桌面宠物</title>
+  <style>
+    :root { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent; user-select: none; -webkit-user-select: none; }
+    .pet-stage { position: relative; width: 290px; height: 175px; -webkit-app-region: drag; }
+    .pet-button { position: absolute; left: 0; bottom: 0; width: 150px; height: 120px; padding: 0; border: 0; background: transparent; cursor: pointer; -webkit-app-region: no-drag; }
+    .pet-button img { width: 150px; height: 113px; object-fit: contain; display: block; user-select: none; -webkit-user-select: none; -webkit-user-drag: none; }
+    .pet-open { display: none !important; }
+    .pet-button:hover .pet-idle { display: none; }
+    .pet-button:hover .pet-open { display: block !important; }
+    .pet-bubble { position: absolute; left: 122px; bottom: 116px; display: none; width: max-content; max-width: 120px; padding: 8px 12px; border: 1px solid #9fc6dc; border-radius: 999px; background: #dceef8; color: #426579; font-size: 12px; font-weight: 650; white-space: nowrap; -webkit-app-region: no-drag; }
+    .pet-bubble.visible { display: block; }
+    .pet-menu { position: absolute; top: 12px; right: 0; display: none; width: 156px; padding: 8px; border: 1px solid rgba(75, 148, 189, .28); border-radius: 18px; background: rgba(255, 255, 255, .96); box-shadow: 0 10px 22px rgba(55, 80, 92, .18); -webkit-app-region: no-drag; }
+    .pet-menu.visible { display: grid; gap: 4px; }
+    .pet-menu button { height: 40px; border: 0; border-radius: 14px; background: transparent; color: #28333a; font: inherit; font-size: 14px; cursor: pointer; }
+    .pet-menu button.primary { background: #4f94bd; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="pet-stage">
+    <button class="pet-button" type="button" aria-label="打开 COLOLO 工作台">
+      <img class="pet-idle" src="assets/trace-sleepy-cat.png" alt="" draggable="false">
+      <img class="pet-open" src="assets/trace-sleepy-cat-open.png" alt="" draggable="false">
+    </button>
+    <span class="pet-bubble" aria-live="polite"></span>
+    <div class="pet-menu" role="menu"><button class="primary" type="button">打开平台</button><button type="button">退出桌面</button></div>
+  </div>
+  <script>
+    const petButton = document.querySelector('.pet-button');
+    const bubble = document.querySelector('.pet-bubble');
+    const menu = document.querySelector('.pet-menu');
+    const menuButtons = menu.querySelectorAll('button');
+    let bubbleTimer;
+    let dragging = false;
+    let moved = false;
+    let startScreenX = 0;
+    let startScreenY = 0;
+    let lastScreenX = 0;
+    let lastScreenY = 0;
+    function clearSelection() {
+      window.getSelection()?.removeAllRanges();
+    }
+    petButton.addEventListener('pointerdown', event => {
+      if (event.button !== 0) return;
+      clearSelection();
+      dragging = true;
+      moved = false;
+      startScreenX = event.screenX;
+      startScreenY = event.screenY;
+      lastScreenX = event.screenX;
+      lastScreenY = event.screenY;
+      petButton.setPointerCapture(event.pointerId);
+      event.preventDefault();
+    });
+    petButton.addEventListener('pointermove', event => {
+      if (!dragging) return;
+      const deltaX = event.screenX - lastScreenX;
+      const deltaY = event.screenY - lastScreenY;
+      if (Math.abs(event.screenX - startScreenX) > 3 || Math.abs(event.screenY - startScreenY) > 3) moved = true;
+      if (deltaX || deltaY) window.desktopWindow.movePet(deltaX, deltaY);
+      lastScreenX = event.screenX;
+      lastScreenY = event.screenY;
+    });
+    petButton.addEventListener('pointerup', event => {
+      if (!dragging) return;
+      dragging = false;
+      petButton.releasePointerCapture(event.pointerId);
+      if (!moved) window.desktopWindow.openMain();
+    });
+    document.addEventListener('contextmenu', event => { event.preventDefault(); clearSelection(); menu.classList.toggle('visible'); });
+    document.addEventListener('selectstart', event => { event.preventDefault(); clearSelection(); });
+    document.addEventListener('dragstart', event => event.preventDefault());
+    menuButtons[0].addEventListener('click', () => { menu.classList.remove('visible'); window.desktopWindow.openMain(); });
+    menuButtons[1].addEventListener('click', () => { menu.classList.remove('visible'); window.desktopWindow.exitPet(); });
+    function showBubble(message) {
+      bubble.textContent = message;
+      bubble.classList.add('visible');
+      clearTimeout(bubbleTimer);
+      bubbleTimer = setTimeout(() => bubble.classList.remove('visible'), 4200);
+    }
+    function sendFile(file) {
+      if (!file || !file.type.startsWith('image/')) return;
+      const reader = new FileReader();
+      reader.onload = () => window.desktopWindow.sendPetImage(reader.result, file.name || 'pasted-image.png', file.type);
+      reader.readAsDataURL(file);
+    }
+    window.addEventListener('paste', event => {
+      const item = [...(event.clipboardData?.items || [])].find(entry => entry.type.startsWith('image/'));
+      if (item) { sendFile(item.getAsFile()); event.preventDefault(); }
+    });
+    window.addEventListener('dragover', event => event.preventDefault());
+    window.addEventListener('drop', event => {
+      event.preventDefault();
+      sendFile(event.dataTransfer?.files?.[0]);
+    });
+    window.desktopWindow.onPetBubble(showBubble);
+  </script>
+</body>
+</html>

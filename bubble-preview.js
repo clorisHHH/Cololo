@@ -1,0 +1,1 @@
+if(new URLSearchParams(location.search).get('preview')==='bubble'){window.addEventListener('load',()=>{const bubble=document.getElementById('floatingBubble');if(!bubble)return;bubble.hidden=false;new MutationObserver(()=>{bubble.hidden=false}).observe(bubble,{attributes:true,attributeFilter:['hidden']})})}
