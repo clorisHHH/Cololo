@@ -7,7 +7,7 @@
   <p><a href="README.zh-CN.md">中文</a> · <strong>English</strong></p>
 </div>
 
-COLOLO is a free, open-source desktop tool for understanding images and reconstructing structured prompts locally. It helps you study visual references without pretending that a final image can reveal an original model, LoRA, sampler, or seed.
+COLOLO is a free, open-source desktop tool that calls vision model APIs to break an image into its visual elements and turn them into a structured prompt. It is not designed to reproduce an image with 100% fidelity; it helps you understand the subject, style, composition, materials, lighting, typography, and other elements so you can reconstruct the image according to your own needs.
 
 ## Download
 
@@ -24,16 +24,15 @@ All installers are published on the [Releases page](https://github.com/clorisHHH
 - Turns a reference image into an editable, structured prompt.
 - Separates subject, style, color, composition, elements, material, camera, lighting, and typography.
 - Accepts drag-and-drop, local import, and pasted screenshots.
-- Runs with a local Ollama vision model when available.
+- Connects to vision model APIs from Doubao, DeepSeek, Qwen, Kimi, OpenAI, Gemini, OpenRouter, Groq, Mistral, xAI, Together AI, SiliconFlow, and custom OpenAI-compatible services.
+- Lets you freely switch the generated prompt between Chinese and English.
 - Includes an optional local generation engine using SD 1.5, ControlNet Canny, and IP-Adapter.
 
-## Local model setup
+## Model API setup
 
-```bash
-ollama pull qwen2.5vl:3b
-```
+Open Settings in COLOLO, choose a provider, enter its API Base URL, model name, and API Key, then test the connection. Provider settings and the API Key are stored locally on your computer.
 
-Keep Ollama running. COLOLO uses the local model when it is available and reports clearly when it is not.
+Ollama is available as an optional local provider, but it is not required for the core workflow.
 
 To start the optional image generation engine:
 
@@ -59,4 +58,4 @@ Build macOS packages with `pnpm dist` and a Windows NSIS installer with `pnpm di
 
 ## Acknowledgements
 
-COLOLO is built as a local-first creative tool. Model weights, Ollama, Stable Diffusion, ControlNet, and IP-Adapter remain subject to their own licenses and terms.
+COLOLO is an API-powered creative tool. Each model provider, Stable Diffusion, ControlNet, IP-Adapter, and any model weights remain subject to their own licenses, pricing, and terms.
