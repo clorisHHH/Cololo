@@ -1,24 +1,31 @@
-# COLOLO
+<div align="center">
+  <img src="https://raw.githubusercontent.com/clorisHHH/Cololo/main/assets/cololo-logo.png" alt="COLOLO" width="520" />
 
-COLOLO is a free, open-source desktop tool for understanding images and reconstructing structured prompts locally.
+  <h1>COLOLO</h1>
+  <p>Understand an image. Rebuild the prompt. Keep the creative control.</p>
 
-## Downloads
+  <p><a href="README.zh-CN.md">中文</a> · <strong>English</strong></p>
+</div>
 
-Download the latest installers from [GitHub Releases](https://github.com/clorisHHH/Cololo/releases):
+COLOLO is a free, open-source desktop tool for understanding images and reconstructing structured prompts locally. It helps you study visual references without pretending that a final image can reveal an original model, LoRA, sampler, or seed.
 
-- Windows x64: `COLOLO Setup 0.1.0-x64.exe`
-- Windows ARM64: `COLOLO Setup 0.1.0-arm64.exe`
-- macOS Apple Silicon: `COLOLO-0.1.0-arm64.dmg` or the `.zip` build
+## Download
 
-## Features
+| Platform | Download |
+| --- | --- |
+| Windows x64 | [COLOLO Setup 0.1.0-x64.exe](https://github.com/clorisHHH/Cololo/releases/latest) |
+| Windows ARM64 | [COLOLO Setup 0.1.0-arm64.exe](https://github.com/clorisHHH/Cololo/releases/latest) |
+| macOS Apple Silicon | [DMG / ZIP](https://github.com/clorisHHH/Cololo/releases/latest) |
 
-## 当前接入
+All installers are published on the [Releases page](https://github.com/clorisHHH/Cololo/releases).
 
-- Frontend: `index.html` / `styles.css` / `app.js`
-- Local vision interface: Ollama `qwen2.5vl:3b`
-- Input: drag an image, import a local image, or paste a screenshot
-- Output: structured prompt dimensions for subject, style, color, composition, elements, material, camera, lighting, and typography
-- Optional local generation service: `server.py`, with SD 1.5 + ControlNet Canny + IP-Adapter
+## What it does
+
+- Turns a reference image into an editable, structured prompt.
+- Separates subject, style, color, composition, elements, material, camera, lighting, and typography.
+- Accepts drag-and-drop, local import, and pasted screenshots.
+- Runs with a local Ollama vision model when available.
+- Includes an optional local generation engine using SD 1.5, ControlNet Canny, and IP-Adapter.
 
 ## Local model setup
 
@@ -26,15 +33,13 @@ Download the latest installers from [GitHub Releases](https://github.com/clorisH
 ollama pull qwen2.5vl:3b
 ```
 
-Keep Ollama running. The desktop app will use the local model when it is available; otherwise the interface will report that the local model is unavailable.
+Keep Ollama running. COLOLO uses the local model when it is available and reports clearly when it is not.
 
 To start the optional image generation engine:
 
 ```bash
 ./run-engine.sh
 ```
-
-The generation model and ControlNet weights are downloaded to the local cache on the first `/generate` request.
 
 ## Development
 
@@ -43,18 +48,15 @@ pnpm install
 pnpm dev
 ```
 
-Build macOS packages:
+Build macOS packages with `pnpm dist` and a Windows NSIS installer with `pnpm dist:win`.
 
-```bash
-pnpm dist
-```
+## Documentation
 
-Build a Windows NSIS installer:
+- [Contributing](CONTRIBUTING.md)
+- [Code of Conduct](CODE_OF_CONDUCT.md)
+- [Security](SECURITY.md)
+- [MIT License](LICENSE)
 
-```bash
-pnpm dist:win
-```
+## Acknowledgements
 
-## License
-
-COLOLO is released under the MIT License. See [LICENSE](LICENSE).
+COLOLO is built as a local-first creative tool. Model weights, Ollama, Stable Diffusion, ControlNet, and IP-Adapter remain subject to their own licenses and terms.
